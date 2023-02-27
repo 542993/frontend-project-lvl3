@@ -12,7 +12,7 @@ const render = (elements) => (path, value) => {
     case 'formState.valid':
       console.log('elements', elements);
       console.log('valid is changed');
-      if (value == false) {
+      if (value === false) {
         elements.inputEl.classList.add('is-invalid');
       } else {
         elements.inputEl.classList.remove('is-invalid');

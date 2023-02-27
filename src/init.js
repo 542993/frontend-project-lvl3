@@ -15,7 +15,7 @@ export default () => {
     },
     posts: [],
     feeds: [
-      {url: 'https://ru.hexlet.io/lessons.rss', title: '', description: ''},
+      { url: 'https://ru.hexlet.io/lessons.rss', title: '', description: '' },
     ],
   };
 
