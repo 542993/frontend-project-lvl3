@@ -10,8 +10,6 @@ const renderError = (elements, value) => {
 const render = (elements) => (path, value) => {
   switch (path) {
     case 'formState.valid':
-      console.log('elements', elements);
-      console.log('valid is changed');
       if (value === false) {
         elements.inputEl.classList.add('is-invalid');
       } else {
