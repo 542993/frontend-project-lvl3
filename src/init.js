@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import i18next from 'i18next';
 import onChange from 'on-change';
+import axios from 'axios';
 import render from './view.js';
 import validate from './validate.js';
 import ru from './locales/ru.js';
@@ -29,9 +30,7 @@ export default () => {
       },
     },
     posts: [],
-    feeds: [
-      { url: 'https://ru.hexlet.io/lessons.rss', title: '', description: '' },
-    ],
+    feeds: [],
   };
 
   const elements = {
@@ -39,7 +38,7 @@ export default () => {
     inputEl: document.querySelector('#url-input'),
     buttonEl: document.querySelector('button[type="submit]'),
   };
-  const watchedState = onChange(state, render(elements));
+  const watchedState = onChange(state, render(elements, i18nInstance));
 
   console.log(elements.formEl);
   elements.formEl.addEventListener('submit', (e) => {
