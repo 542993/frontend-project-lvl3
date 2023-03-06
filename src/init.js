@@ -6,6 +6,14 @@ import render from './view.js';
 import validate from './validate.js';
 import ru from './locales/ru.js';
 
+const routes = {
+  proxyUrl: (url) => {
+    const proxyUrl = new URL('https://allorigins.hexlet.app/get/');
+    proxyUrl.searchParams('disableCache', 'true');
+    proxyUrl.searchParams('url', url);
+    return proxyUrl.toString();
+  },
+};
 export default () => {
   const defaultLanguege = 'ru';
   const i18nInstance = i18next.createInstance();
