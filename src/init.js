@@ -5,12 +5,13 @@ import axios from 'axios';
 import render from './view.js';
 import validate from './validate.js';
 import ru from './locales/ru.js';
+import parse from './parser.js';
 
 const routes = {
   proxyUrl: (url) => {
-    const proxyUrl = new URL('https://allorigins.hexlet.app/get/');
-    proxyUrl.searchParams('disableCache', 'true');
-    proxyUrl.searchParams('url', url);
+    const proxyUrl = new URL('https://allorigins.hexlet.app/get');
+    proxyUrl.searchParams.set('disableCache', 'true');
+    proxyUrl.searchParams.set('url', url);
     return proxyUrl.toString();
   },
 };
@@ -32,6 +33,7 @@ export default () => {
     formState: {
       valid: true,
       processState: 'filling',
+      processError: [],
       error: null,
       fields: {
         url: '',
@@ -45,6 +47,8 @@ export default () => {
     formEl: document.querySelector('.rss-form'),
     inputEl: document.querySelector('#url-input'),
     buttonEl: document.querySelector('button[type="submit]'),
+    postsContainer: document.querySelector('.posts'),
+    feedsContainer: document.querySelector('.feeds'),
   };
   const watchedState = onChange(state, render(elements, i18nInstance));
 
@@ -61,7 +65,18 @@ export default () => {
       .then(() => {
         watchedState.formState.valid = _.isEmpty(watchedState.formState.error);
         if (watchedState.formState.valid) {
-          watchedState.formState.processState = 'sending';
+          watchedState.formState.processState = 'loading';
+          watchedState.formState.processError = 'null';
+          axios
+            .get(routes.proxyUrl(watchedState.formState.fields.url))
+            .then((response) => {
+              const { feed, posts } = parse(
+                response.data.contents,
+                watchedState.formState.fields.url
+              );
+              watchedState.feeds = [feed, ...watchedState.feeds];
+              watchedState.posts = [...posts, ...watchedState.posts];
+            });
         } else {
           watchedState.formState.processState = 'filling';
         }
