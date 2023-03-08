@@ -47,6 +47,7 @@ export default () => {
     formEl: document.querySelector('.rss-form'),
     inputEl: document.querySelector('#url-input'),
     buttonEl: document.querySelector('button[type="submit]'),
+    feedBackEl: document.querySelector('.feedback'),
     postsContainer: document.querySelector('.posts'),
     feedsContainer: document.querySelector('.feeds'),
   };
@@ -66,16 +67,19 @@ export default () => {
         watchedState.formState.valid = _.isEmpty(watchedState.formState.error);
         if (watchedState.formState.valid) {
           watchedState.formState.processState = 'loading';
-          watchedState.formState.processError = 'null';
           axios
             .get(routes.proxyUrl(watchedState.formState.fields.url))
             .then((response) => {
-              const { feed, posts } = parse(
-                response.data.contents,
-                watchedState.formState.fields.url
-              );
+              const parseRes = parse(response.data.contents, watchedState.formState.fields.url);
+              const { feed, posts } = parseRes;
+              watchedState.formState.processState = 'loaded';
               watchedState.feeds = [feed, ...watchedState.feeds];
               watchedState.posts = [...posts, ...watchedState.posts];
+            })
+            .catch((err) => {
+              watchedState.formState.processState = 'failed';
+              watchedState.formState.processError = [i18nInstance.t('messages.errors.network_error')];
+              console.log(err);
             });
         } else {
           watchedState.formState.processState = 'filling';

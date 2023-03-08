@@ -9,6 +9,7 @@ export default {
       },
       success: {
         loaded: 'RSS успешно загружен',
+        loading: 'Идет загрузка',
       },
     },
     headings: {

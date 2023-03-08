@@ -1,4 +1,5 @@
 import _ from 'lodash';
+
 const parse = (xmlContent, url) => {
   const parser = new DOMParser();
   const htmlContent = parser.parseFromString(xmlContent, 'application/xml');
@@ -8,10 +9,10 @@ const parse = (xmlContent, url) => {
   const feed = {
     decription: decriptionFeed,
     title: titleFeed,
-    url: url,
+    url,
     id: _.uniqueId(),
   };
-  const posts = Array.from(htmlContent.querySelectorAll('item')).map((item) => {
+  const posts = Array.from(channel.querySelectorAll('item')).map((item) => {
     const postLink = item.querySelector('link');
     const postDescription = item.querySelector('description').textContent;
     const postTitle = item.querySelector('title').textContent;

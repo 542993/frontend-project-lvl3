@@ -9,8 +9,13 @@ const validate = (fields, urls, i18nInstance) => {
       notOneOf: i18nInstance.t('messages.errors.already_exist_rss'),
     },
   });
-
-  const schema = yup.string().trim().required().url().notOneOf(urls);
+  // prettier-ignore
+  const schema = yup
+    .string()
+    .trim()
+    .required()
+    .url()
+    .notOneOf(urls);
 
   return schema
     .validate(fields)

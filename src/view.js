@@ -1,13 +1,87 @@
-const renderError = (elements, value) => {
-  const parentForm = elements.formEl.parentElement;
-  parentForm.lastChild.remove();
-  const p = document.createElement('p');
-  p.classList.add('m-0', 'position-absolute', 'small', 'text-danger');
-  p.textContent = value;
-  parentForm.append(p);
+const renderFeedback = (elements, message, mode = 'danger') => {
+  elements.feedBackEl.textContent = '';
+  elements.feedBackEl.classList.remove('text-danger', 'text-success');
+  elements.feedBackEl.classList.add(`text-${mode}`);
+  elements.feedBackEl.textContent = message;
+};
+const handleProcessState = (elements, processState, i18nInstance) => {
+  switch (processState) {
+    case 'failed':
+      break;
+    case 'filling':
+      break;
+    case 'loading':
+      renderFeedback(elements, i18nInstance.t('messages.success.loading'), 'success');
+      break;
+    case 'loaded':
+      renderFeedback(elements, i18nInstance.t('messages.success.loaded'), 'success');
+      break;
+    default:
+      throw new Error(`Unknown process state: ${processState}`);
+  }
+};
+const buildCardElement = (title) => {
+  const cardEl = document.createElement('div');
+  cardEl.classList.add('card', 'border-0');
+  const cardBodyEl = document.createElement('div');
+  cardBodyEl.classList.add('card-body');
+  const titleEl = document.createElement('h2');
+  titleEl.classList.add('card-title', 'h4');
+  titleEl.textContent = title;
+  cardBodyEl.append(titleEl);
+  const listEl = document.createElement('ul');
+  listEl.classList.add('list-group', 'border-0', 'rounded-0');
+  cardEl.append(cardBodyEl, listEl);
+  return { cardEl, listEl };
 };
 
-const render = (elements) => (path, value) => {
+const renderFeeds = (elements, value, i18next) => {
+  elements.feedsContainer.innerHTML = '';
+  const { cardEl, listEl } = buildCardElement(i18next.t('headings.feeds'));
+  elements.feedsContainer.append(cardEl);
+  const feedList = value.map((feed) => {
+    const liEl = document.createElement('li');
+    liEl.classList.add('list-group-item', 'border-0', 'border-end-0');
+    const h3 = document.createElement('h3');
+    h3.classList.add('h-6', 'm-0');
+    h3.textContent = feed.title;
+    const p = document.createElement('p');
+    p.classList.add('m-0', 'small', 'text-black-50');
+    p.textContent = feed.decription;
+    liEl.append(h3, p);
+    return liEl;
+  });
+  listEl.append(...feedList);
+};
+
+const renderPosts = (elements, value, i18next) => {
+  elements.postsContainer.innerHTML = '';
+  const { cardEl, listEl } = buildCardElement(i18next.t('headings.posts'));
+  elements.postsContainer.append(cardEl);
+  const postList = value.map((post) => {
+    const liEl = document.createElement('li');
+    liEl.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+    const aEl = document.createElement('a');
+    aEl.href = post.link;
+    aEl.classList.add('fw-bold');
+    aEl.dataset.id = post.id;
+    aEl.target = '_blank';
+    aEl.rel = 'noopener noreferrer';
+    aEl.textContent = post.title;
+    const buttonEl = document.createElement('button');
+    buttonEl.type = 'button';
+    buttonEl.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+    buttonEl.dataset.id = post.id;
+    buttonEl.dataset.bsToggle = 'modal';
+    buttonEl.dataset.bsTarget = '#modal';
+    buttonEl.textContent = 'Просмотр';
+    liEl.append(aEl, buttonEl);
+    return liEl;
+  });
+  listEl.append(...postList);
+};
+
+const render = (elements, i18nInstance) => (path, value) => {
   switch (path) {
     case 'formState.valid':
       if (value === false) {
@@ -17,7 +91,19 @@ const render = (elements) => (path, value) => {
       }
       break;
     case 'formState.error':
-      renderError(elements, value);
+      renderFeedback(elements, value);
+      break;
+    case 'formState.processError':
+      renderFeedback(elements, value);
+      break;
+    case 'formState.processState':
+      handleProcessState(elements, value, i18nInstance);
+      break;
+    case 'posts':
+      renderPosts(elements, value, i18nInstance);
+      break;
+    case 'feeds':
+      renderFeeds(elements, value, i18nInstance);
       break;
     default:
       break;
