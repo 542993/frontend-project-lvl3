@@ -33,8 +33,8 @@ export default () => {
     formState: {
       valid: true,
       processState: 'filling',
-      processError: [],
-      error: null,
+      processError: null,
+      error: [],
       fields: {
         url: '',
       },
@@ -67,6 +67,7 @@ export default () => {
         watchedState.formState.valid = _.isEmpty(watchedState.formState.error);
         if (watchedState.formState.valid) {
           watchedState.formState.processState = 'loading';
+          watchedState.formState.processError = null;
           axios
             .get(routes.proxyUrl(watchedState.formState.fields.url))
             .then((response) => {
@@ -78,8 +79,11 @@ export default () => {
             })
             .catch((err) => {
               watchedState.formState.processState = 'failed';
-              watchedState.formState.processError = [i18nInstance.t('messages.errors.network_error')];
-              console.log(err);
+              if (axios.isAxiosError(err)) {
+                watchedState.formState.processError = [i18nInstance.t('messages.errors.network_error')];
+              } else {
+                watchedState.formState.processError = [i18nInstance.t('messages.errors.not_rss')];
+              }
             });
         } else {
           watchedState.formState.processState = 'filling';
