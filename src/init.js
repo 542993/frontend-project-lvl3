@@ -64,7 +64,7 @@ export default () => {
     posts: [],
     feeds: [],
     uiState: {
-      viewedPost: new Set(),
+      viewedPosts: new Set(),
       openedModal: null,
     },
   };
@@ -136,7 +136,7 @@ export default () => {
   });
   elements.postsContainer.addEventListener('click', (e) => {
     const { id: linkedPostId } = e.target.dataset;
-    watchedState.uiState.viewedPost.add(linkedPostId);
+    watchedState.uiState.viewedPosts.add(linkedPostId);
     watchedState.uiState.openedModal = linkedPostId;
   });
   setTimeout(() => checkForUpdate(watchedState), 5000);

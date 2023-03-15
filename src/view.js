@@ -62,7 +62,7 @@ const renderFeeds = (elements, value, i18next) => {
   listEl.append(...feedList);
 };
 
-const renderPosts = (elements, value, i18next) => {
+const renderPosts = (elements, value, i18next, state) => {
   elements.postsContainer.innerHTML = '';
   const { cardEl, listEl } = buildCardElement(i18next.t('headings.posts'));
   elements.postsContainer.append(cardEl);
@@ -78,7 +78,7 @@ const renderPosts = (elements, value, i18next) => {
     );
     const aEl = document.createElement('a');
     aEl.href = post.link;
-    aEl.classList.add('fw-bold');
+    aEl.classList.add(state.uiState.viewedPosts.has(post.id) ? ('fw-normal', 'link-secondary') : 'fw-bold');
     aEl.dataset.id = post.id;
     aEl.target = '_blank';
     aEl.rel = 'noopener noreferrer';
@@ -125,7 +125,8 @@ const render = (elements, i18nInstance, state) => (path, value) => {
       handleProcessState(elements, value, i18nInstance);
       break;
     case 'posts':
-      renderPosts(elements, value, i18nInstance);
+    case 'uiState.wievedPosts':
+      renderPosts(elements, value, i18nInstance, state);
       break;
     case 'feeds':
       renderFeeds(elements, value, i18nInstance);
