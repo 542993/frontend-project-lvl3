@@ -54,8 +54,6 @@ export default () => {
   const state = {
     formState: {
       valid: true,
-      processState: 'filling',
-      processError: null,
       error: [],
       fields: {
         url: '',
@@ -63,6 +61,8 @@ export default () => {
     },
     posts: [],
     feeds: [],
+    processState: 'filling',
+    processError: null,
     uiState: {
       viewedPosts: new Set(),
       openedModal: null,
@@ -80,59 +80,53 @@ export default () => {
   };
   const watchedState = onChange(state, render(elements, i18nInstance, state));
 
-  console.log(elements.formEl);
   elements.formEl.addEventListener('submit', (e) => {
     e.preventDefault();
     const urlValue = new FormData(e.target).get('url').trim();
     watchedState.formState.fields.url = urlValue;
     const listUrls = watchedState.feeds.map((feed) => feed.url);
-    validate(urlValue, listUrls, i18nInstance)
-      .then((errors) => {
-        watchedState.formState.error = errors;
-      })
+    validate(urlValue, listUrls)
       .then(() => {
-        watchedState.formState.valid = _.isEmpty(watchedState.formState.error);
-        if (watchedState.formState.valid) {
-          watchedState.formState.processState = 'loading';
-          watchedState.formState.processError = null;
-          axios
-            .get(routes.proxyUrl(watchedState.formState.fields.url))
-            .then((response) => {
-              const parseRes = parse(
-                response.data.contents,
-                watchedState.formState.fields.url
-              );
-              const { feed, posts } = parseRes;
-              watchedState.formState.processState = 'loaded';
-              const feedWithId = {
-                ...feed,
-                id: _.uniqueId(),
-              };
-              const postsWithId = posts.map((post) => ({
-                ...post,
-                feedId: feedWithId.id,
-                id: _.uniqueId(),
-              }));
-              watchedState.feeds = [feedWithId, ...watchedState.feeds];
-              watchedState.posts = [...postsWithId, ...watchedState.posts];
-            })
-            .catch((err) => {
-              watchedState.formState.processState = 'failed';
-              if (axios.isAxiosError(err)) {
-                watchedState.formState.processError = [
-                  i18nInstance.t('messages.errors.network_error'),
-                ];
-              } else {
-                watchedState.formState.processError = [
-                  i18nInstance.t('messages.errors.not_rss'),
-                ];
-              }
-            });
+        watchedState.formState.valid = true;
+        watchedState.formState.processState = 'loading';
+        watchedState.formState.processError = null;
+        axios
+          .get(routes.proxyUrl(watchedState.formState.fields.url))
+          .then((response) => {
+            const parseRes = parse(
+              response.data.contents,
+              watchedState.formState.fields.url
+            );
+            const { feed, posts } = parseRes;
+            watchedState.formState.processState = 'loaded';
+            const feedWithId = {
+              ...feed,
+              id: _.uniqueId(),
+            };
+            const postsWithId = posts.map((post) => ({
+              ...post,
+              feedId: feedWithId.id,
+              id: _.uniqueId(),
+            }));
+            watchedState.feeds = [feedWithId, ...watchedState.feeds];
+            watchedState.posts = [...postsWithId, ...watchedState.posts];
+          });
+      })
+      .catch((err) => {
+        watchedState.formState.processState = 'failed';
+        if (axios.isAxiosError(err)) {
+          watchedState.formState.processError = [
+            i18nInstance.t('messages.errors.network_error'),
+          ];
+        } else if (err.isParsingError) {
+          watchedState.formState.processError = [
+            i18nInstance.t('messages.errors.not_rss'),
+          ];
         } else {
-          watchedState.formState.processState = 'filling';
+          console.error(err);
+          watchedState.formState.processError = [i18nInstance.t(err.errors)];
         }
       });
-    console.log('state', watchedState);
   });
   elements.postsContainer.addEventListener('click', (e) => {
     const { id: linkedPostId } = e.target.dataset;

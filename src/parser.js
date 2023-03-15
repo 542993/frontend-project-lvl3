@@ -1,7 +1,12 @@
-const parse = (xmlContent, url) => {
+const parse = (data, url) => {
   const parser = new DOMParser();
-  const htmlContent = parser.parseFromString(xmlContent, 'application/xml');
-  const channel = htmlContent.querySelector('channel');
+  const xmlContent = parser.parseFromString(data, 'application/xml');
+  const channel = xmlContent.querySelector('channel');
+  const parsererror = xmlContent.querySelector('parsererror');
+  if (parsererror) {
+    const error = new Error();
+    error.isParsingError = true;
+  }
   const decriptionFeed = channel.querySelector('description').textContent;
   const titleFeed = channel.querySelector('title').textContent;
   const feed = {

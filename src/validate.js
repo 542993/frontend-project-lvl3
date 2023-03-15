@@ -1,12 +1,12 @@
 import * as yup from 'yup';
 
-const validate = (fields, urls, i18nInstance) => {
+const validate = (fields, urls) => {
   yup.setLocale({
     string: {
-      url: i18nInstance.t('messages.errors.not_valid_url'),
+      url: 'messages.errors.not_valid_url',
     },
     mixed: {
-      notOneOf: i18nInstance.t('messages.errors.already_exist_rss'),
+      notOneOf: 'messages.errors.already_exist_rss',
     },
   });
   // prettier-ignore
@@ -17,10 +17,7 @@ const validate = (fields, urls, i18nInstance) => {
     .url()
     .notOneOf(urls);
 
-  return schema
-    .validate(fields)
-    .then(() => [])
-    .catch((err) => err.errors);
+  return schema.validate(fields);
 };
 
 export default validate;
