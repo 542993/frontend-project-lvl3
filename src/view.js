@@ -11,10 +11,18 @@ const handleProcessState = (elements, processState, i18nInstance) => {
     case 'filling':
       break;
     case 'loading':
-      renderFeedback(elements, i18nInstance.t('messages.success.loading'), 'success');
+      renderFeedback(
+        elements,
+        i18nInstance.t('messages.success.loading'),
+        'success'
+      );
       break;
     case 'loaded':
-      renderFeedback(elements, i18nInstance.t('messages.success.loaded'), 'success');
+      renderFeedback(
+        elements,
+        i18nInstance.t('messages.success.loaded'),
+        'success'
+      );
       break;
     default:
       throw new Error(`Unknown process state: ${processState}`);
@@ -60,7 +68,14 @@ const renderPosts = (elements, value, i18next) => {
   elements.postsContainer.append(cardEl);
   const postList = value.map((post) => {
     const liEl = document.createElement('li');
-    liEl.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+    liEl.classList.add(
+      'list-group-item',
+      'd-flex',
+      'justify-content-between',
+      'align-items-start',
+      'border-0',
+      'border-end-0'
+    );
     const aEl = document.createElement('a');
     aEl.href = post.link;
     aEl.classList.add('fw-bold');
@@ -80,8 +95,18 @@ const renderPosts = (elements, value, i18next) => {
   });
   listEl.append(...postList);
 };
+const renderModal = (elements, value, state) => {
+  const titleEl = elements.modal.querySelector('.modal-title');
+  const descriptionEl = elements.modal.querySelector('.modal-body');
+  const linkEl = elements.modal.querySelector('.modal-footer > a');
+  const openedPost = state.posts.find((post) => post.id === value);
+  const { link, description, title } = openedPost;
+  titleEl.textContent = title;
+  descriptionEl.textContent = description;
+  linkEl.href = link;
+};
 
-const render = (elements, i18nInstance) => (path, value) => {
+const render = (elements, i18nInstance, state) => (path, value) => {
   switch (path) {
     case 'formState.valid':
       if (value === false) {
@@ -104,6 +129,9 @@ const render = (elements, i18nInstance) => (path, value) => {
       break;
     case 'feeds':
       renderFeeds(elements, value, i18nInstance);
+      break;
+    case 'uiState.openedModal':
+      renderModal(elements, value, state);
       break;
     default:
       break;

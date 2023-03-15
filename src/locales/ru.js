@@ -6,6 +6,7 @@ export default {
         not_rss: 'Ресурс не содержит валидный RSS',
         not_valid_url: 'Ссылка должна быть валидным URL',
         network_error: 'Ошибка сети',
+        unknown: 'Неизвестная ошибка. Попробуйте перезагрузить страницу',
       },
       success: {
         loaded: 'RSS успешно загружен',

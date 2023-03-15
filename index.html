@@ -1,56 +1,119 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width,initial-scale=1,shrink-to-fit=no" name="viewport">
-  <title>Hexlet Frontend Project</title>
-  <script defer="defer" src="main.js">
-  </script>
-  <link href="main.css" rel="stylesheet">
-</head>
-<body class="d-flex flex-column min-vh-100">
-  <div aria-hidden="true" aria-labelledby="modal" class="modal fade" id="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title"></h5><button aria-label="Close" class="btn-close close" data-bs-dismiss="modal" type="button"></button>
-        </div>
-        <div class="modal-body text-break"></div>
-        <div class="modal-footer">
-          <a class="btn btn-primary full-article" href="#" rel="noopener noreferrer" role="button" target="_blank">Читать полностью</a> <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Закрыть</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width,initial-scale=1,shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Hexlet Frontend Project</title>
+    <script
+      defer="defer"
+      src="main.js"
+    ></script>
+    <link
+      href="main.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <div
+      aria-hidden="true"
+      aria-labelledby="modal"
+      class="modal fade"
+      id="modal"
+      role="dialog"
+      tabindex="-1"
+    >
+      <div
+        class="modal-dialog"
+        role="document"
+      >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button
+              aria-label="Close"
+              class="btn-close close"
+              data-bs-dismiss="modal"
+              type="button"
+            ></button>
+          </div>
+          <div class="modal-body text-break"></div>
+          <div class="modal-footer">
+            <a
+              class="btn btn-primary full-article"
+              href="#"
+              rel="noopener noreferrer"
+              role="button"
+              target="_blank"
+              >Читать полностью</a
+            >
+            <button
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              type="button"
+            >
+              Закрыть
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <main class="flex-grow-1">
-    <section class="container-fluid bg-dark p-5">
-      <div class="row">
-        <div class="col-md-10 col-lg-8 mx-auto text-white">
-          <h1 class="display-3 mb-0">RSS агрегатор</h1>
-          <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
-          <form action="" class="rss-form text-body">
-            <div class="row">
-              <div class="col">
-                <div class="form-floating">
-                  <input aria-label="url" autocomplete="off" autofocus="" class="form-control w-100" id="url-input" name="url" placeholder="ссылка RSS" required=""> <label for="url-input">Ссылка RSS</label>
+    <main class="flex-grow-1">
+      <section class="container-fluid bg-dark p-5">
+        <div class="row">
+          <div class="col-md-10 col-lg-8 mx-auto text-white">
+            <h1 class="display-3 mb-0">RSS агрегатор</h1>
+            <p class="lead">
+              Начните читать RSS сегодня! Это легко, это красиво.
+            </p>
+            <form
+              action=""
+              class="rss-form text-body"
+            >
+              <div class="row">
+                <div class="col">
+                  <div class="form-floating">
+                    <input
+                      aria-label="url"
+                      autocomplete="off"
+                      autofocus=""
+                      class="form-control w-100"
+                      id="url-input"
+                      name="url"
+                      placeholder="ссылка RSS"
+                      required=""
+                    />
+                    <label for="url-input">Ссылка RSS</label>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <button
+                    aria-label="add"
+                    class="h-100 btn btn-lg btn-primary px-sm-5"
+                    type="submit"
+                  >
+                    Добавить
+                  </button>
                 </div>
               </div>
-              <div class="col-auto">
-                <button aria-label="add" class="h-100 btn btn-lg btn-primary px-sm-5" type="submit">Добавить</button>
-              </div>
-            </div>
-          </form>
-          <p class="mt-2 mb-0 text-muted">Пример: https://ru.hexlet.io/lessons.rss</p>
-          <p class="feedback m-0 position-absolute small text-danger"></p>
+            </form>
+            <p class="mt-2 mb-0 text-muted">
+              Пример: https://ru.hexlet.io/lessons.rss
+            </p>
+            <p class="feedback m-0 position-absolute small text-danger"></p>
+          </div>
         </div>
-      </div>
-    </section>
-    <section class="container-fluid container-xxl p-5">
-      <div class="row">
-        <div class="col-md-10 col-lg-8 order-1 mx-auto posts"></div>
-        <div class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds"></div>
-      </div>
-    </section>
-  </main>
-</body>
+      </section>
+      <section class="container-fluid container-xxl p-5">
+        <div class="row">
+          <div class="col-md-10 col-lg-8 order-1 mx-auto posts"></div>
+          <div
+            class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds"
+          ></div>
+        </div>
+      </section>
+    </main>
+  </body>
 </html>

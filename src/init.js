@@ -15,6 +15,28 @@ const routes = {
     return proxyUrl.toString();
   },
 };
+const checkForUpdate = (watchedState) => {
+  const promises = watchedState.feeds.map((feed) => axios
+    .get(routes.proxyUrl(feed.url))
+    .then((response) => {
+      const { posts: updatedPosts } = parse(response.data.contents, feed.url);
+      const currentPosts = watchedState.posts
+        .filter((post) => post.feedId === feed.id)
+        .map((post) => post.title);
+      const newPosts = updatedPosts.filter(
+        (post) => !currentPosts.includes(post.title)
+      );
+      const postsWithId = newPosts.map((post) => ({
+        ...post,
+        id: _.uniqueId(),
+        feedId: feed.id,
+      }));
+      watchedState.posts = [...postsWithId, ...watchedState.posts];
+    })
+    .catch((err) => console.error(err)));
+  Promise.all(promises).then(() => setTimeout(() => checkForUpdate(watchedState), 5000));
+};
+
 export default () => {
   const defaultLanguege = 'ru';
   const i18nInstance = i18next.createInstance();
@@ -41,6 +63,10 @@ export default () => {
     },
     posts: [],
     feeds: [],
+    uiState: {
+      viewedPost: new Set(),
+      openedModal: null,
+    },
   };
 
   const elements = {
@@ -50,8 +76,9 @@ export default () => {
     feedBackEl: document.querySelector('.feedback'),
     postsContainer: document.querySelector('.posts'),
     feedsContainer: document.querySelector('.feeds'),
+    modal: document.querySelector('#modal'),
   };
-  const watchedState = onChange(state, render(elements, i18nInstance));
+  const watchedState = onChange(state, render(elements, i18nInstance, state));
 
   console.log(elements.formEl);
   elements.formEl.addEventListener('submit', (e) => {
@@ -71,18 +98,34 @@ export default () => {
           axios
             .get(routes.proxyUrl(watchedState.formState.fields.url))
             .then((response) => {
-              const parseRes = parse(response.data.contents, watchedState.formState.fields.url);
+              const parseRes = parse(
+                response.data.contents,
+                watchedState.formState.fields.url
+              );
               const { feed, posts } = parseRes;
               watchedState.formState.processState = 'loaded';
-              watchedState.feeds = [feed, ...watchedState.feeds];
-              watchedState.posts = [...posts, ...watchedState.posts];
+              const feedWithId = {
+                ...feed,
+                id: _.uniqueId(),
+              };
+              const postsWithId = posts.map((post) => ({
+                ...post,
+                feedId: feedWithId.id,
+                id: _.uniqueId(),
+              }));
+              watchedState.feeds = [feedWithId, ...watchedState.feeds];
+              watchedState.posts = [...postsWithId, ...watchedState.posts];
             })
             .catch((err) => {
               watchedState.formState.processState = 'failed';
               if (axios.isAxiosError(err)) {
-                watchedState.formState.processError = [i18nInstance.t('messages.errors.network_error')];
+                watchedState.formState.processError = [
+                  i18nInstance.t('messages.errors.network_error'),
+                ];
               } else {
-                watchedState.formState.processError = [i18nInstance.t('messages.errors.not_rss')];
+                watchedState.formState.processError = [
+                  i18nInstance.t('messages.errors.not_rss'),
+                ];
               }
             });
         } else {
@@ -91,4 +134,10 @@ export default () => {
       });
     console.log('state', watchedState);
   });
+  elements.postsContainer.addEventListener('click', (e) => {
+    const { id: linkedPostId } = e.target.dataset;
+    watchedState.uiState.viewedPost.add(linkedPostId);
+    watchedState.uiState.openedModal = linkedPostId;
+  });
+  setTimeout(() => checkForUpdate(watchedState), 5000);
 };
