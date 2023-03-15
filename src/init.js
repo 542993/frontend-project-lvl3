@@ -125,6 +125,7 @@ export default () => {
         } else {
           console.error(err);
           watchedState.formState.processError = [i18nInstance.t(err.errors)];
+          watchedState.formState.valid = false;
         }
       });
   });

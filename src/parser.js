@@ -6,6 +6,7 @@ const parse = (data, url) => {
   if (parsererror) {
     const error = new Error();
     error.isParsingError = true;
+    throw error;
   }
   const decriptionFeed = channel.querySelector('description').textContent;
   const titleFeed = channel.querySelector('title').textContent;
