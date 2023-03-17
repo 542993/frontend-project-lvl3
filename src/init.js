@@ -90,7 +90,7 @@ export default () => {
         watchedState.formState.valid = true;
         watchedState.processState = 'loading';
         watchedState.processError = null;
-        axios
+        return axios
           .get(routes.proxyUrl(watchedState.formState.fields.url))
           .then((response) => {
             const parseRes = parse(
@@ -114,6 +114,7 @@ export default () => {
       })
       .catch((err) => {
         watchedState.processState = 'failed';
+        watchedState.formState.valid = false;
         if (axios.isAxiosError(err)) {
           watchedState.processError = i18nInstance.t('messages.errors.network_error');
         } else if (err.isParsingError) {
