@@ -112,8 +112,8 @@ const render = (elements, i18nInstance, state) => (path, value) => {
       }
       break;
     case 'formState.error':
-      renderFeedback(elements,value);
-      break
+      renderFeedback(elements, value);
+      break;
     case 'processError':
       renderFeedback(elements, value);
       break;

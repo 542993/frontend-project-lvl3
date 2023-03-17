@@ -120,12 +120,10 @@ export default () => {
         } else if (err.isParsingError) {
           watchedState.processError = i18nInstance.t('messages.errors.not_rss');
         } else if (err.errors) {
-          console.log('ошибки валидации', err.errors)
           watchedState.formState.error = i18nInstance.t(err.errors);
           watchedState.formState.valid = false;
         }
       });
-      console.log(watchedState)
   });
   elements.postsContainer.addEventListener('click', (e) => {
     const { id: linkedPostId } = e.target.dataset;
