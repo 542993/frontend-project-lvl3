@@ -4,25 +4,21 @@ const renderFeedback = (elements, message, mode = 'danger') => {
   elements.feedBackEl.classList.add(`text-${mode}`);
   elements.feedBackEl.textContent = message;
 };
-const handleProcessState = (elements, processState, i18nInstance) => {
+const handleProcessState = (elements, processState) => {
   switch (processState) {
     case 'failed':
       break;
     case 'filling':
+      elements.buttonEl.disabled = false;
+      elements.inputEl.removeAttribute('readonly');
       break;
     case 'loading':
-      renderFeedback(
-        elements,
-        i18nInstance.t('messages.success.loading'),
-        'success'
-      );
+      elements.buttonEl.disabled = true;
+      elements.inputEl.setAttribute('readonly', true);
       break;
     case 'loaded':
-      renderFeedback(
-        elements,
-        i18nInstance.t('messages.success.loaded'),
-        'success'
-      );
+      elements.buttonEl.disabled = false;
+      elements.inputEl.removeAttribute('readonly');
       break;
     default:
       throw new Error(`Unknown process state: ${processState}`);
@@ -118,10 +114,10 @@ const render = (elements, i18nInstance, state) => (path, value) => {
     case 'formState.error':
       renderFeedback(elements, value);
       break;
-    case 'formState.processError':
+    case 'processError':
       renderFeedback(elements, value);
       break;
-    case 'formState.processState':
+    case 'processState':
       handleProcessState(elements, value, i18nInstance);
       break;
     case 'posts':
@@ -129,7 +125,9 @@ const render = (elements, i18nInstance, state) => (path, value) => {
       renderPosts(elements, value, i18nInstance, state);
       break;
     case 'feeds':
+      renderFeedback(elements, i18nInstance.t('messages.success.loaded'), 'success');
       renderFeeds(elements, value, i18nInstance);
+      elements.formEl.reset();
       break;
     case 'uiState.openedModal':
       renderModal(elements, value, state);

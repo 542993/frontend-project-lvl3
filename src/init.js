@@ -72,7 +72,7 @@ export default () => {
   const elements = {
     formEl: document.querySelector('.rss-form'),
     inputEl: document.querySelector('#url-input'),
-    buttonEl: document.querySelector('button[type="submit]'),
+    buttonEl: document.querySelector('#submit-button'),
     feedBackEl: document.querySelector('.feedback'),
     postsContainer: document.querySelector('.posts'),
     feedsContainer: document.querySelector('.feeds'),
@@ -88,8 +88,8 @@ export default () => {
     validate(urlValue, listUrls)
       .then(() => {
         watchedState.formState.valid = true;
-        watchedState.formState.processState = 'loading';
-        watchedState.formState.processError = null;
+        watchedState.processState = 'loading';
+        watchedState.processError = null;
         axios
           .get(routes.proxyUrl(watchedState.formState.fields.url))
           .then((response) => {
@@ -98,7 +98,7 @@ export default () => {
               watchedState.formState.fields.url
             );
             const { feed, posts } = parseRes;
-            watchedState.formState.processState = 'loaded';
+            watchedState.processState = 'loaded';
             const feedWithId = {
               ...feed,
               id: _.uniqueId(),
@@ -113,18 +113,18 @@ export default () => {
           });
       })
       .catch((err) => {
-        watchedState.formState.processState = 'failed';
+        watchedState.processState = 'failed';
         if (axios.isAxiosError(err)) {
-          watchedState.formState.processError = [
+          watchedState.processError = [
             i18nInstance.t('messages.errors.network_error'),
           ];
         } else if (err.isParsingError) {
-          watchedState.formState.processError = [
+          watchedState.processError = [
             i18nInstance.t('messages.errors.not_rss'),
           ];
         } else {
           console.error(err);
-          watchedState.formState.processError = [i18nInstance.t(err.errors)];
+          watchedState.processError = [i18nInstance.t(err.errors)];
           watchedState.formState.valid = false;
         }
       });
