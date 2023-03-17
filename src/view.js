@@ -107,12 +107,13 @@ const render = (elements, i18nInstance, state) => (path, value) => {
     case 'formState.valid':
       if (!value) {
         elements.inputEl.classList.add('is-invalid');
-        console.log('ошибки формы', state.formState.error);
-        renderFeedback(elements, state.formState.error);
       } else {
         elements.inputEl.classList.remove('is-invalid');
       }
       break;
+    case 'formState.error':
+      renderFeedback(elements,value);
+      break
     case 'processError':
       renderFeedback(elements, value);
       break;
