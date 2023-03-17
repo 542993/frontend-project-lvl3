@@ -54,7 +54,7 @@ export default () => {
   const state = {
     formState: {
       valid: true,
-      error: [],
+      error: null,
       fields: {
         url: '',
       },
@@ -115,16 +115,11 @@ export default () => {
       .catch((err) => {
         watchedState.processState = 'failed';
         if (axios.isAxiosError(err)) {
-          watchedState.processError = [
-            i18nInstance.t('messages.errors.network_error'),
-          ];
+          watchedState.processError = i18nInstance.t('messages.errors.network_error');
         } else if (err.isParsingError) {
-          watchedState.processError = [
-            i18nInstance.t('messages.errors.not_rss'),
-          ];
+          watchedState.processError = i18nInstance.t('messages.errors.not_rss');
         } else {
-          console.error(err);
-          watchedState.formState.error = [i18nInstance.t(err.errors)];
+          watchedState.formState.error = i18nInstance.t(err.errors);
           watchedState.formState.valid = false;
         }
       });
