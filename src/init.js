@@ -24,7 +24,7 @@ const checkForUpdate = (watchedState) => {
         .filter((post) => post.feedId === feed.id)
         .map((post) => post.title);
       const newPosts = updatedPosts.filter(
-        (post) => !currentPosts.includes(post.title)
+        (post) => !currentPosts.includes(post.title),
       );
       const postsWithId = newPosts.map((post) => ({
         ...post,
@@ -95,7 +95,7 @@ export default () => {
           .then((response) => {
             const parseRes = parse(
               response.data.contents,
-              watchedState.formState.fields.url
+              watchedState.formState.fields.url,
             );
             const { feed, posts } = parseRes;
             watchedState.processState = 'loaded';
