@@ -70,7 +70,7 @@ const renderPosts = (elements, value, i18next, state) => {
       'justify-content-between',
       'align-items-start',
       'border-0',
-      'border-end-0'
+      'border-end-0',
     );
     const aEl = document.createElement('a');
     aEl.href = post.link;
