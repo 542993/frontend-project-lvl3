@@ -4,9 +4,9 @@ const parse = (data, url) => {
   const channel = xmlContent.querySelector('channel');
   const parsererror = xmlContent.querySelector('parsererror');
   if (parsererror) {
-    const error = new Error();
+    const errorMessage = parsererror.textContent;
+    const error = new Error(errorMessage);
     error.isParsingError = true;
-    console.log(error);
     throw error;
   }
   const decriptionFeed = channel.querySelector('description').textContent;

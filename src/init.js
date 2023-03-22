@@ -87,7 +87,7 @@ export default () => {
         validate(watchedState.formState.fields.url, listUrls)
           .then(() => {
             watchedState.formState.error = null;
-            axios
+            return axios
               .get(routes.proxyUrl(watchedState.formState.fields.url))
               .then((response) => {
                 const parseRes = parse(
@@ -112,7 +112,7 @@ export default () => {
           })
           .catch((err) => {
             watchedState.processState = 'failed';
-            if (axios.isAxiosError(err)) {
+            if (err.isAxiosError) {
               watchedState.processError = i18nInstance.t('messages.errors.network_error');
             } else if (err.isParsingError) {
               watchedState.processError = i18nInstance.t('messages.errors.not_rss');
