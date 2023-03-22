@@ -48,87 +48,85 @@ export default () => {
         ru,
       },
     })
-    .then(console.log)
-    .catch((err) => console.log('error', err));
-
-  const state = {
-    formState: {
-      valid: true,
-      error: null,
-      fields: {
-        url: '',
-      },
-    },
-    posts: [],
-    feeds: [],
-    processState: 'filling',
-    processError: null,
-    uiState: {
-      viewedPosts: new Set(),
-      openedModal: null,
-    },
-  };
-
-  const elements = {
-    formEl: document.querySelector('.rss-form'),
-    inputEl: document.querySelector('#url-input'),
-    buttonEl: document.querySelector('#submit-button'),
-    feedBackEl: document.querySelector('.feedback'),
-    postsContainer: document.querySelector('.posts'),
-    feedsContainer: document.querySelector('.feeds'),
-    modal: document.querySelector('#modal'),
-  };
-  const watchedState = onChange(state, render(elements, i18nInstance, state));
-
-  elements.formEl.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const urlValue = new FormData(e.target).get('url').trim();
-    watchedState.formState.fields.url = urlValue;
-    const listUrls = watchedState.feeds.map((feed) => feed.url);
-    validate(urlValue, listUrls)
-      .then(() => {
+    .then(() => {
+      const state = {
+        formState: {
+          valid: true,
+          error: null,
+          fields: {
+            url: '',
+          },
+        },
+        posts: [],
+        feeds: [],
+        processState: 'filling',
+        processError: null,
+        uiState: {
+          viewedPosts: new Set(),
+          openedModal: null,
+        },
+      };
+      const elements = {
+        formEl: document.querySelector('.rss-form'),
+        inputEl: document.querySelector('#url-input'),
+        buttonEl: document.querySelector('#submit-button'),
+        feedBackEl: document.querySelector('.feedback'),
+        postsContainer: document.querySelector('.posts'),
+        feedsContainer: document.querySelector('.feeds'),
+        modal: document.querySelector('#modal'),
+      };
+      const watchedState = onChange(state, render(elements, i18nInstance, state));
+      elements.formEl.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const urlValue = new FormData(e.target).get('url').trim();
+        watchedState.formState.fields.url = urlValue;
+        const listUrls = watchedState.feeds.map((feed) => feed.url);
         watchedState.formState.valid = true;
         watchedState.processState = 'loading';
         watchedState.processError = null;
-        return axios
-          .get(routes.proxyUrl(watchedState.formState.fields.url))
-          .then((response) => {
-            const parseRes = parse(
-              response.data.contents,
-              watchedState.formState.fields.url,
-            );
-            const { feed, posts } = parseRes;
-            watchedState.processState = 'loaded';
-            const feedWithId = {
-              ...feed,
-              id: _.uniqueId(),
-            };
-            const postsWithId = posts.map((post) => ({
-              ...post,
-              feedId: feedWithId.id,
-              id: _.uniqueId(),
-            }));
-            watchedState.feeds = [feedWithId, ...watchedState.feeds];
-            watchedState.posts = [...postsWithId, ...watchedState.posts];
+        validate(watchedState.formState.fields.url, listUrls)
+          .then(() => {
+            watchedState.formState.error = null;
+            axios
+              .get(routes.proxyUrl(watchedState.formState.fields.url))
+              .then((response) => {
+                const parseRes = parse(
+                  response.data.contents,
+                  watchedState.formState.fields.url,
+                );
+                const { feed, posts } = parseRes;
+                watchedState.processState = 'loaded';
+                const feedWithId = {
+                  ...feed,
+                  id: _.uniqueId(),
+                };
+                const postsWithId = posts.map((post) => ({
+                  ...post,
+                  feedId: feedWithId.id,
+                  id: _.uniqueId(),
+                }));
+                watchedState.feeds = [feedWithId, ...watchedState.feeds];
+                watchedState.posts = [...postsWithId, ...watchedState.posts];
+                watchedState.processState = 'filling';
+              });
+          })
+          .catch((err) => {
+            watchedState.processState = 'failed';
+            if (axios.isAxiosError(err)) {
+              watchedState.processError = i18nInstance.t('messages.errors.network_error');
+            } else if (err.isParsingError) {
+              watchedState.processError = i18nInstance.t('messages.errors.not_rss');
+            } else if (err.errors) {
+              watchedState.formState.error = i18nInstance.t(err.errors);
+              watchedState.formState.valid = false;
+            }
           });
-      })
-      .catch((err) => {
-        watchedState.processState = 'failed';
-        watchedState.formState.valid = false;
-        if (axios.isAxiosError(err)) {
-          watchedState.processError = i18nInstance.t('messages.errors.network_error');
-        } else if (err.isParsingError) {
-          watchedState.processError = i18nInstance.t('messages.errors.not_rss');
-        } else if (err.errors) {
-          watchedState.formState.error = i18nInstance.t(err.errors);
-          watchedState.formState.valid = false;
-        }
       });
-  });
-  elements.postsContainer.addEventListener('click', (e) => {
-    const { id: linkedPostId } = e.target.dataset;
-    watchedState.uiState.viewedPosts.add(linkedPostId);
-    watchedState.uiState.openedModal = linkedPostId;
-  });
-  setTimeout(() => checkForUpdate(watchedState), 5000);
+      elements.postsContainer.addEventListener('click', (e) => {
+        const { id: linkedPostId } = e.target.dataset;
+        watchedState.uiState.viewedPosts.add(linkedPostId);
+        watchedState.uiState.openedModal = linkedPostId;
+      });
+      setTimeout(() => checkForUpdate(watchedState), 5000);
+    });
 };

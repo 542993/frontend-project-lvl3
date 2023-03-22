@@ -7,7 +7,6 @@ const renderFeedback = (elements, message, mode = 'danger') => {
 const handleProcessState = (elements, processState) => {
   switch (processState) {
     case 'failed':
-      break;
     case 'filling':
       elements.buttonEl.disabled = false;
       elements.inputEl.removeAttribute('readonly');
@@ -118,7 +117,7 @@ const render = (elements, i18nInstance, state) => (path, value) => {
       renderFeedback(elements, value);
       break;
     case 'processState':
-      handleProcessState(elements, value, i18nInstance);
+      handleProcessState(elements, value);
       break;
     case 'posts':
     case 'uiState.wievedPosts':
