@@ -1,4 +1,4 @@
-#JavaScript project - «RSS reader»
+# JavaScript project - «RSS reader»
 ---
 ### Hexlet tests and linter status:
 
@@ -8,11 +8,11 @@
 ---
 ### Demo site [RSS reader](https://frontend-project-lvl3-vvj7.vercel.app/)
 ---
-###Description
-#####Rss Reader is a service for aggregating RSS feeds, with which it is convenient to read sources, such as blogs. It allows you to add a large number of RSS feeds, updates them itself and adds new entries to the general feed.
+### Description
+##### Rss Reader is a service for aggregating RSS feeds, with which it is convenient to read sources, such as blogs. It allows you to add a large number of RSS feeds, updates them itself and adds new entries to the general feed.
 
-###Installation and Usage
-#####Locally
-######$ git clone https://github.com/542993/frontend-project-lvl3.git
-######$ make install
-######$ make develop
+### Installation and Usage
+##### Locally
+###### $ git clone https://github.com/542993/frontend-project-lvl3.git
+###### $ make install
+###### $ make develop
