@@ -38,9 +38,9 @@ const buildCardElement = (title) => {
   return { cardEl, listEl };
 };
 
-const renderFeeds = (elements, value, i18next) => {
+const renderFeeds = (elements, value, i18nInstance) => {
   elements.feedsContainer.innerHTML = '';
-  const { cardEl, listEl } = buildCardElement(i18next.t('headings.feeds'));
+  const { cardEl, listEl } = buildCardElement(i18nInstance.t('headings.feeds'));
   elements.feedsContainer.append(cardEl);
   const feedList = value.map((feed) => {
     const liEl = document.createElement('li');
@@ -50,16 +50,16 @@ const renderFeeds = (elements, value, i18next) => {
     h3.textContent = feed.title;
     const p = document.createElement('p');
     p.classList.add('m-0', 'small', 'text-black-50');
-    p.textContent = feed.decription;
+    p.textContent = feed.description;
     liEl.append(h3, p);
     return liEl;
   });
   listEl.append(...feedList);
 };
 
-const renderPosts = (elements, value, i18next, state) => {
+const renderPosts = (elements, value, i18nInstance, state) => {
   elements.postsContainer.innerHTML = '';
-  const { cardEl, listEl } = buildCardElement(i18next.t('headings.posts'));
+  const { cardEl, listEl } = buildCardElement(i18nInstance.t('headings.posts'));
   elements.postsContainer.append(cardEl);
   const postList = value.map((post) => {
     const liEl = document.createElement('li');
@@ -84,7 +84,7 @@ const renderPosts = (elements, value, i18next, state) => {
     buttonEl.dataset.id = post.id;
     buttonEl.dataset.bsToggle = 'modal';
     buttonEl.dataset.bsTarget = '#modal';
-    buttonEl.textContent = 'Просмотр';
+    buttonEl.textContent = i18nInstance.t('buttons.view');
     liEl.append(aEl, buttonEl);
     return liEl;
   });
