@@ -9,10 +9,10 @@ const parse = (data, url) => {
     error.isParsingError = true;
     throw error;
   }
-  const decriptionFeed = channel.querySelector('description').textContent;
+  const descriptionFeed = channel.querySelector('description').textContent;
   const titleFeed = channel.querySelector('title').textContent;
   const feed = {
-    decription: decriptionFeed,
+    description: descriptionFeed,
     title: titleFeed,
     url,
   };
